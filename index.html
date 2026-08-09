@@ -162,7 +162,36 @@
 
 </div>
 
-<script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  update,
+  onValue
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+
+
+const firebaseConfig = {
+  apiKey: "YOUR EXISTING API KEY",
+  authDomain: "live-quiz-game-79f0e.firebaseapp.com",
+  databaseURL: "YOUR EXISTING DATABASE URL",
+  projectId: "live-quiz-game-79f0e",
+  storageBucket: "live-quiz-game-79f0e.firebasestorage.app",
+  messagingSenderId: "489513542029",
+  appId: "YOUR EXISTING APP ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+/* -------------------------
+   SCREEN CONTROL
+------------------------- */
 
 function hideAll() {
   document.querySelectorAll(".card").forEach(x => {
@@ -170,65 +199,170 @@ function hideAll() {
   });
 }
 
-function goHome() {
+window.goHome = function() {
   hideAll();
   document.getElementById("home").classList.remove("hidden");
-}
+};
 
-function showHost() {
+window.showHost = function() {
   hideAll();
   document.getElementById("host").classList.remove("hidden");
-}
+};
 
-function showJoin() {
+window.showJoin = function() {
   hideAll();
   document.getElementById("join").classList.remove("hidden");
-}
+};
 
-function createGame() {
-  document.getElementById("gameCode").innerText =
-    Math.floor(100000 + Math.random() * 900000);
+
+/* -------------------------
+   HOST CREATES GAME
+------------------------- */
+
+window.createGame = function() {
+
+  const code =
+    Math.floor(100000 + Math.random() * 900000).toString();
+
+  document.getElementById("gameCode").innerText = code;
+
+  const gameRef = ref(db, "games/" + code);
+
+  set(gameRef, {
+    status: "waiting",
+    questionNumber: 1,
+    question: "What is the capital of France?",
+    answers: {
+      A: "London",
+      B: "Paris",
+      C: "Rome",
+      D: "Madrid"
+    },
+    correctAnswer: "B",
+    participants: {}
+  });
 
   hideAll();
   document.getElementById("lobby").classList.remove("hidden");
-}
 
-function joinGame() {
+  listenToGame(code);
+};
+
+
+/* -------------------------
+   PARTICIPANT JOINS
+------------------------- */
+
+window.joinGame = function() {
+
+  const code =
+    document.getElementById("joinCode").value.trim();
+
+  const playerName =
+    document.getElementById("playerName").value.trim();
+
+  if (!code || !playerName) {
+    alert("Please enter the game code and your name.");
+    return;
+  }
+
+  const playerRef =
+    ref(db, "games/" + code + "/participants/" + playerName);
+
+  set(playerRef, {
+    name: playerName,
+    answered: false,
+    answer: ""
+  });
+
   hideAll();
   document.getElementById("waiting").classList.remove("hidden");
+
+  listenToGame(code);
+};
+
+
+/* -------------------------
+   HOST STARTS GAME
+------------------------- */
+
+window.startGame = function() {
+
+  const code =
+    document.getElementById("gameCode").innerText.trim();
+
+  if (!code) {
+    alert("Game code missing.");
+    return;
+  }
+
+  update(ref(db, "games/" + code), {
+    status: "question"
+  });
+};
+
+
+/* -------------------------
+   LISTEN FOR GAME CHANGES
+------------------------- */
+
+function listenToGame(code) {
+
+  const gameRef = ref(db, "games/" + code);
+
+  onValue(gameRef, snapshot => {
+
+    const game = snapshot.val();
+
+    if (!game) return;
+
+
+    /* GAME STARTED */
+
+    if (game.status === "question") {
+
+      hideAll();
+
+      document.getElementById("question").classList.remove("hidden");
+
+      document.getElementById("questionText").innerText =
+        game.question;
+
+    }
+
+  });
 }
 
-function startGame() {
-  hideAll();
-  document.getElementById("question").classList.remove("hidden");
-}
 
-function answer(choice) {
-  alert("Answer submitted: " + choice);
-}
+/* -------------------------
+   SUBMIT ANSWER
+------------------------- */
 
-</script>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-  import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
+window.answer = function(choice) {
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyATiy7r0UggRombinXdnrmPRwCd98GWpxQ",
-    authDomain: "live-quiz-game-79f0e.firebaseapp.com",
-    databaseURL: "https://live-quiz-game-79f0e-default-rtdb.firebaseio.com",
-    projectId: "live-quiz-game-79f0e",
-    storageBucket: "live-quiz-game-79f0e.firebasestorage.app",
-    messagingSenderId: "489513542029",
-    appId: "1:489513542029:web:c9a61c48a4412408071dc4"
-  };
+  const code =
+    document.getElementById("joinCode").value.trim();
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-</script>
-</body>
-</html>
+  const playerName =
+    document.getElementById("playerName").value.trim();
+
+  if (!code || !playerName) {
+    alert("Game information missing.");
+    return;
+  }
+
+  update(
+    ref(
+      db,
+      "games/" + code + "/participants/" + playerName
+    ),
+    {
+      answer: choice,
+      answered: true
+    }
+  );
+
+  alert("Answer submitted!");
+};
+
+      </script>
