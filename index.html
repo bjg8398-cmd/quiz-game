@@ -284,9 +284,10 @@ window.joinGame = function() {
   });
 
   hideAll();
-  document.getElementById("waiting").classList.remove("hidden");
+document.getElementById("lobby").classList.remove("hidden");
 
-  listenToGame(code);
+listenToGame(code);
+listenForPlayers(code);
 };
 
 
@@ -340,7 +341,36 @@ function listenToGame(code) {
 
   });
 }
+function listenForPlayers(code) {
 
+    const playersRef = ref(db, "games/" + code + "/participants");
+
+    onValue(playersRef, snapshot => {
+
+        const players = snapshot.val() || {};
+        const playersDiv = document.getElementById("players");
+
+        playersDiv.innerHTML = "";
+
+        const names = Object.values(players);
+
+        if (names.length === 0) {
+            playersDiv.innerHTML =
+                '<div class="player">Waiting for players...</div>';
+            return;
+        }
+
+        names.forEach(player => {
+
+            const div = document.createElement("div");
+
+            div.className = "player";
+            div.innerText = player.name;
+
+            playersDiv.appendChild(div);
+        });
+    });
+}
 
 /* -------------------------
    SUBMIT ANSWER
