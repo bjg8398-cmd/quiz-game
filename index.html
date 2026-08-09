@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      color: #222;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 25px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.08);
+      margin-top: 30px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 15px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 17px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      color: #222;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .code {
+      font-size: 36px;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: 5px;
+    }
+
+    .player {
+      padding: 12px;
+      background: #f3f4f6;
+      margin: 8px 0;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HOME -->
+  <div id="home" class="card">
+    <h1>🎮 Quiz Game</h1>
+    <p style="text-align:center">
+      Multiplayer quiz game
+    </p>
+
+    <button onclick="showHost()">Host a Game</button>
+    <button class="secondary" onclick="showJoin()">Join a Game</button>
+  </div>
+
+  <!-- HOST -->
+  <div id="host" class="card hidden">
+    <h1>🎤 Host Game</h1>
+
+    <input id="quizName" placeholder="Quiz name">
+
+    <button onclick="createGame()">Create Game</button>
+
+    <button class="secondary" onclick="goHome()">Back</button>
+  </div>
+
+  <!-- LOBBY -->
+  <div id="lobby" class="card hidden">
+    <h1>Waiting Room</h1>
+
+    <p style="text-align:center">Game Code</p>
+
+    <div class="code" id="gameCode">482913</div>
+
+    <p style="text-align:center">
+      Share this code with your players
+    </p>
+
+    <h3>Players</h3>
+
+    <div id="players">
+      <div class="player">Waiting for players...</div>
+    </div>
+
+    <button onclick="startGame()">START GAME</button>
+  </div>
+
+  <!-- JOIN -->
+  <div id="join" class="card hidden">
+    <h1>Join Quiz</h1>
+
+    <input id="joinCode" placeholder="Game Code">
+
+    <input id="playerName" placeholder="Your Name">
+
+    <button onclick="joinGame()">JOIN GAME</button>
+
+    <button class="secondary" onclick="goHome()">Back</button>
+  </div>
+
+  <!-- WAITING -->
+  <div id="waiting" class="card hidden">
+    <h1>🎉 You're In!</h1>
+
+    <p style="text-align:center">
+      Waiting for the host to start the game...
+    </p>
+  </div>
+
+  <!-- QUESTION -->
+  <div id="question" class="card hidden">
+    <h2>Question 1 / 10</h2>
+
+    <h1 id="questionText">
+      What is the capital of France?
+    </h1>
+
+    <button onclick="answer('A')">A. London</button>
+    <button onclick="answer('B')">B. Paris</button>
+    <button onclick="answer('C')">C. Rome</button>
+    <button onclick="answer('D')">D. Madrid</button>
+  </div>
+
+</div>
+
+<script>
+
+function hideAll() {
+  document.querySelectorAll(".card").forEach(x => {
+    x.classList.add("hidden");
+  });
+}
+
+function goHome() {
+  hideAll();
+  document.getElementById("home").classList.remove("hidden");
+}
+
+function showHost() {
+  hideAll();
+  document.getElementById("host").classList.remove("hidden");
+}
+
+function showJoin() {
+  hideAll();
+  document.getElementById("join").classList.remove("hidden");
+}
+
+function createGame() {
+  document.getElementById("gameCode").innerText =
+    Math.floor(100000 + Math.random() * 900000);
+
+  hideAll();
+  document.getElementById("lobby").classList.remove("hidden");
+}
+
+function joinGame() {
+  hideAll();
+  document.getElementById("waiting").classList.remove("hidden");
+}
+
+function startGame() {
+  hideAll();
+  document.getElementById("question").classList.remove("hidden");
+}
+
+function answer(choice) {
+  alert("Answer submitted: " + choice);
+}
+
+</script>
+
+</body>
+</html>
