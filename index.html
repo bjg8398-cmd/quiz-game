@@ -304,9 +304,11 @@ window.joinGame = function() {
     answered: false,
     answer: ""
   });
+document.getElementById("gameCode").innerText = code;
 
-  hideAll();
+hideAll();
 document.getElementById("lobby").classList.remove("hidden");
+  
 
 listenToGame(code);
 listenForPlayers(code);
