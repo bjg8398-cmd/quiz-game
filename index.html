@@ -254,7 +254,7 @@ alert("createGame is running");
     Math.floor(100000 + Math.random() * 900000).toString();
 
   document.getElementById("gameCode").innerText = code;
-
+showLobby();
   const gameRef = ref(db, "games/" + code);
 
   await set(gameRef, {
