@@ -248,7 +248,7 @@ window.showJoin = function() {
    HOST CREATES GAME
 ------------------------- */
 
-window.createGame = function() {
+window.createGame = async function() {
 
   const code =
     Math.floor(100000 + Math.random() * 900000).toString();
@@ -257,7 +257,7 @@ window.createGame = function() {
 
   const gameRef = ref(db, "games/" + code);
 
-  set(gameRef, {
+  await set(gameRef, {
   status: "waiting",
   questionNumber: 1,
 
