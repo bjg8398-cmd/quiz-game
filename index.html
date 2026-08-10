@@ -161,7 +161,28 @@
   </div>
 
 </div>
+<script>
+function hideAllScreens() {
+  document.querySelectorAll(".card").forEach(function(card) {
+    card.classList.add("hidden");
+  });
+}
 
+window.showHost = function() {
+  hideAllScreens();
+  document.getElementById("host").classList.remove("hidden");
+};
+
+window.showJoin = function() {
+  hideAllScreens();
+  document.getElementById("join").classList.remove("hidden");
+};
+
+window.goHome = function() {
+  hideAllScreens();
+  document.getElementById("home").classList.remove("hidden");
+};
+</script>
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
