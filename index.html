@@ -121,7 +121,7 @@
       <div class="player">Waiting for players...</div>
     </div>
 
-    <button onclick="startGame()">START GAME</button>
+     <button id="startGameButton" class="hidden"onclick="startGame()">START GAME</button>
   </div>
 
   <!-- JOIN -->
@@ -273,7 +273,7 @@ window.createGame = function() {
 
   hideAll();
   document.getElementById("lobby").classList.remove("hidden");
-
+document.getElementById("startGameButton").classList.remove("hidden");
   listenToGame(code);
 listenForPlayers(code);
 };
@@ -308,7 +308,7 @@ document.getElementById("gameCode").innerText = code;
 
 hideAll();
 document.getElementById("waiting").classList.remove("hidden");
-  
+  document.getElementById("startGameButton").classList.add("hidden");
 
 listenToGame(code);
 listenForPlayers(code);
