@@ -389,7 +389,7 @@ function listenForPlayers(code) {
             const div = document.createElement("div");
 
             div.className = "player";
-            div.innerText = player.name;
+            div.innerText = player.name + (player.answered ? " — Answer: " + player.answer : " — Waiting...");
 
             playersDiv.appendChild(div);
         });
